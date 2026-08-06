@@ -126,7 +126,9 @@ Los archivos compilados se generan en `dist/`.
 
 ## Autor
 
-Plagas Out
+Desarrollado por **Víctor Roberto Curzio**  
+Portfolio: [curziovictorroberto.com](https://curziovictorroberto.com)  
+Email: curziovictorroberto@gmail.com
 
 ## Licencia
 
