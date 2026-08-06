@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import emailjs from '@emailjs/browser';
 
 const SERVICE_OPTIONS = [
   'Desinsectación General',
@@ -12,7 +13,14 @@ const SERVICE_OPTIONS = [
   'Otro',
 ];
 
-const CONTACT_EMAIL = 'info@plagasout.com.ar';
+const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'info@plagasout.com.ar';
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+
+if (EMAILJS_PUBLIC_KEY) {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
 
 export default function Contact() {
   const [nombre, setNombre] = useState('');
@@ -20,18 +28,44 @@ export default function Contact() {
   const [tipo, setTipo] = useState(SERVICE_OPTIONS[0]);
   const [mensaje, setMensaje] = useState('');
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const subject = encodeURIComponent('Solicitud de presupuesto - ' + (nombre || 'Sin nombre'));
-    const body = encodeURIComponent(
-      `Nombre: ${nombre}\nZona/Barrio: ${zona}\nTipo de plaga/servicio: ${tipo}\nMensaje: ${mensaje}`
-    );
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-    setSent(true);
-    if (resetTimer.current) clearTimeout(resetTimer.current);
-    resetTimer.current = setTimeout(() => setSent(false), 6000);
+    setError('');
+    setLoading(true);
+
+    if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
+      setError('Configuración de email no disponible. Intenta más tarde.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        nombre: nombre || 'Sin nombre',
+        zona,
+        tipo,
+        mensaje,
+        email: CONTACT_EMAIL,
+      });
+
+      setSent(true);
+      setNombre('');
+      setZona('');
+      setTipo(SERVICE_OPTIONS[0]);
+      setMensaje('');
+
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+      resetTimer.current = setTimeout(() => setSent(false), 6000);
+    } catch (err) {
+      console.error('Error enviando email:', err);
+      setError('No pudimos enviar tu solicitud. Intenta de nuevo o contactanos por WhatsApp.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -128,12 +162,17 @@ export default function Contact() {
                 className="contact-input contact-textarea"
               />
             </div>
-            <button type="submit" className="btn btn-primary contact-submit">
-              Enviar Solicitud
+            <button type="submit" className="btn btn-primary contact-submit" disabled={loading}>
+              {loading ? 'Enviando...' : 'Enviar Solicitud'}
             </button>
             {sent && (
               <div className="contact-sent">
-                Se abrió tu correo con la solicitud precargada. Si no se abrió, escribinos por WhatsApp.
+                Solicitud enviada correctamente. Nos contactaremos en menos de 24 horas.
+              </div>
+            )}
+            {error && (
+              <div className="contact-error">
+                {error}
               </div>
             )}
           </form>
