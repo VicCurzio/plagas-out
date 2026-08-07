@@ -127,5 +127,5 @@ Los archivos compilados se generan en `dist/`.
 ## Autor
 
 Desarrollado por **Victor Roberto Curzio**  
-Portfolio: [curziovictorroberto.com](https://curziovictorroberto.com)  
+Portfolio: [viccurzio.github.io/portfolio](https://viccurzio.github.io/portfolio/)  
 Email: curziovictorroberto@gmail.com
