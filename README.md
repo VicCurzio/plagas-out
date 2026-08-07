@@ -128,4 +128,4 @@ Los archivos compilados se generan en `dist/`.
 
 Desarrollado por **Victor Roberto Curzio**  
 Portfolio: [viccurzio.github.io/portfolio](https://viccurzio.github.io/portfolio/)  
-Email: curziovictorroberto@gmail.com
+Email: victor.curzio@hotmail.com
