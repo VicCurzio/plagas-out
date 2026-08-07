@@ -27,10 +27,23 @@ export default function Contact() {
   const [zona, setZona] = useState('');
   const [tipo, setTipo] = useState(SERVICE_OPTIONS[0]);
   const [mensaje, setMensaje] = useState('');
-  const [sent, setSent] = useState(false);
+  const [sentVia, setSentVia] = useState<'emailjs' | 'mailto' | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Si EmailJS no está configurado o falla, no perdemos la consulta: abrimos el
+  // cliente de correo con los datos ya cargados.
+  function openMailto() {
+    const subject = encodeURIComponent('Solicitud de presupuesto - ' + (nombre || 'Sin nombre'));
+    const body = encodeURIComponent(
+      `Nombre: ${nombre}\nZona/Barrio: ${zona}\nTipo de plaga/servicio: ${tipo}\nMensaje: ${mensaje}`
+    );
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setSentVia('mailto');
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => setSentVia(null), 6000);
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -38,7 +51,7 @@ export default function Contact() {
     setLoading(true);
 
     if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
-      setError('Configuración de email no disponible. Intenta más tarde.');
+      openMailto();
       setLoading(false);
       return;
     }
@@ -52,17 +65,17 @@ export default function Contact() {
         email: CONTACT_EMAIL,
       });
 
-      setSent(true);
+      setSentVia('emailjs');
       setNombre('');
       setZona('');
       setTipo(SERVICE_OPTIONS[0]);
       setMensaje('');
 
       if (resetTimer.current) clearTimeout(resetTimer.current);
-      resetTimer.current = setTimeout(() => setSent(false), 6000);
+      resetTimer.current = setTimeout(() => setSentVia(null), 6000);
     } catch (err) {
       console.error('Error enviando email:', err);
-      setError('No pudimos enviar tu solicitud. Intenta de nuevo o contactanos por WhatsApp.');
+      openMailto();
     } finally {
       setLoading(false);
     }
@@ -165,9 +178,14 @@ export default function Contact() {
             <button type="submit" className="btn btn-primary contact-submit" disabled={loading}>
               {loading ? 'Enviando...' : 'Enviar Solicitud'}
             </button>
-            {sent && (
+            {sentVia === 'emailjs' && (
               <div className="contact-sent">
                 Solicitud enviada correctamente. Nos contactaremos en menos de 24 horas.
+              </div>
+            )}
+            {sentVia === 'mailto' && (
+              <div className="contact-sent">
+                Se abrió tu correo con la solicitud precargada. Si no se abrió, escribinos por WhatsApp.
               </div>
             )}
             {error && (
