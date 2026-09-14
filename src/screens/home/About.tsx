@@ -1,5 +1,5 @@
-import Reveal from './Reveal';
-import ImagePlaceholder from './ImagePlaceholder';
+import Reveal from '../../shared/ui/Reveal';
+import ImagePlaceholder from '../../shared/ui/ImagePlaceholder';
 
 const VALUES = [
   {

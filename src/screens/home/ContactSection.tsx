@@ -1,84 +1,42 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import emailjs from '@emailjs/browser';
+import {
+  SERVICE_OPTIONS,
+  sendContactRequest,
+  type ContactChannel,
+} from '../../domain/contact/contactRequest';
+import { contactInfo } from '../../domain/contact/contactInfo';
 
-const SERVICE_OPTIONS = [
-  'Desinsectación General',
-  'Desratización',
-  'Control de Moscas',
-  'Desinfección y Sanitización',
-  'Control de Aves / Murciélagos',
-  'Contrato Anual',
-  'Servicio para actividad comercial',
-  'Otro',
-];
-
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'info@plagasout.com.ar';
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-
-if (EMAILJS_PUBLIC_KEY) {
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-}
-
-export default function Contact() {
+export default function ContactSection() {
   const [nombre, setNombre] = useState('');
   const [zona, setZona] = useState('');
-  const [tipo, setTipo] = useState(SERVICE_OPTIONS[0]);
+  const [tipo, setTipo] = useState<string>(SERVICE_OPTIONS[0]);
   const [mensaje, setMensaje] = useState('');
-  const [sentVia, setSentVia] = useState<'emailjs' | 'mailto' | null>(null);
-  const [error, setError] = useState('');
+  const [sentVia, setSentVia] = useState<ContactChannel | null>(null);
   const [loading, setLoading] = useState(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Si EmailJS no está configurado o falla, no perdemos la consulta: abrimos el
-  // cliente de correo con los datos ya cargados.
-  function openMailto() {
-    const subject = encodeURIComponent('Solicitud de presupuesto - ' + (nombre || 'Sin nombre'));
-    const body = encodeURIComponent(
-      `Nombre: ${nombre}\nZona/Barrio: ${zona}\nTipo de plaga/servicio: ${tipo}\nMensaje: ${mensaje}`
-    );
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-    setSentVia('mailto');
+  function avisarPor(canal: ContactChannel) {
+    setSentVia(canal);
     if (resetTimer.current) clearTimeout(resetTimer.current);
     resetTimer.current = setTimeout(() => setSentVia(null), 6000);
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
-    if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
-      openMailto();
-      setLoading(false);
-      return;
-    }
+    const canal = await sendContactRequest({ nombre, zona, tipo, mensaje });
 
-    try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        nombre: nombre || 'Sin nombre',
-        zona,
-        tipo,
-        mensaje,
-        email: CONTACT_EMAIL,
-      });
-
-      setSentVia('emailjs');
+    if (canal === 'emailjs') {
       setNombre('');
       setZona('');
       setTipo(SERVICE_OPTIONS[0]);
       setMensaje('');
-
-      if (resetTimer.current) clearTimeout(resetTimer.current);
-      resetTimer.current = setTimeout(() => setSentVia(null), 6000);
-    } catch (err) {
-      console.error('Error enviando email:', err);
-      openMailto();
-    } finally {
-      setLoading(false);
     }
+
+    avisarPor(canal);
+    setLoading(false);
   }
 
   return (
@@ -102,7 +60,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="contact-method-label">WHATSAPP</div>
-                <div className="contact-method-value">+54 221 000-0000</div>
+                <div className="contact-method-value">{contactInfo.whatsappVisible}</div>
               </div>
             </div>
             <div className="contact-method">
@@ -114,7 +72,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="contact-method-label">EMAIL TÉCNICO</div>
-                <div className="contact-method-value">{CONTACT_EMAIL}</div>
+                <div className="contact-method-value">{contactInfo.email}</div>
               </div>
             </div>
             <div className="contact-method">
@@ -127,7 +85,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="contact-method-label">INSTAGRAM</div>
-                <div className="contact-method-value">@plagasoutlp</div>
+                <div className="contact-method-value">{contactInfo.instagram}</div>
               </div>
             </div>
           </div>
@@ -186,11 +144,6 @@ export default function Contact() {
             {sentVia === 'mailto' && (
               <div className="contact-sent">
                 Se abrió tu correo con la solicitud precargada. Si no se abrió, escribinos por WhatsApp.
-              </div>
-            )}
-            {error && (
-              <div className="contact-error">
-                {error}
               </div>
             )}
           </form>

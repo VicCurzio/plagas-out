@@ -1,4 +1,4 @@
-import Reveal from './Reveal';
+import Reveal from '../../shared/ui/Reveal';
 
 const STAR = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

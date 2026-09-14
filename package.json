@@ -1,13 +1,15 @@
 {
-  "name": "site",
+  "name": "plagas-out",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "lint": "oxlint && node scripts/check-layers.mjs",
+    "typecheck": "tsc -b",
+    "preview": "vite preview",
+    "release": "node scripts/release.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

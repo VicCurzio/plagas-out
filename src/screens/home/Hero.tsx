@@ -1,4 +1,4 @@
-import ImagePlaceholder from './ImagePlaceholder';
+import ImagePlaceholder from '../../shared/ui/ImagePlaceholder';
 
 export default function Hero() {
   return (

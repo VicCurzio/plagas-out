@@ -16,6 +16,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Chequeos estrictos: sin esto, TypeScript deja pasar null y undefined
+       en silencio, que es justo lo que se le pide que agarre. */
+    "strict": true,
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

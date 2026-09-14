@@ -2,13 +2,72 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <!-- Sin el prefijo /plagas-out: Vite le agrega el `base` al compilar. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="PlagasOut Control Urbano — Fumigación profesional y sanitaria en La Plata, Berisso y Ensenada. Aplicador habilitado, Ley 10.699." />
+    <title>PlagasOut Control Urbano — Fumigación en La Plata, Berisso y Ensenada</title>
+    <meta
+      name="description"
+      content="PlagasOut Control Urbano — Fumigación profesional y sanitaria en La Plata, Berisso y Ensenada. Aplicador habilitado, Ley 10.699."
+    />
+    <link rel="canonical" href="https://viccurzio.github.io/plagas-out/" />
+
+    <!--
+      Etiquetas para compartir (Open Graph). Son las que WhatsApp, Instagram y
+      Facebook leen para armar la tarjeta del link. Las direcciones van
+      absolutas si o si: quien lee la tarjeta no esta parado en el sitio y no
+      sabe completar una ruta relativa.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PlagasOut Control Urbano" />
+    <meta property="og:title" content="PlagasOut Control Urbano — Fumigacion profesional" />
+    <meta
+      property="og:description"
+      content="Control de plagas en La Plata, Berisso y Ensenada. Aplicador habilitado, Ley 10.699. Presupuesto sin cargo."
+    />
+    <meta property="og:url" content="https://viccurzio.github.io/plagas-out/" />
+    <meta property="og:locale" content="es_AR" />
+    <!-- TODO: falta la imagen de 1200x630. Hasta que exista, la tarjeta sale
+         con titulo y descripcion pero sin foto.
+    <meta property="og:image" content="https://viccurzio.github.io/plagas-out/og.jpg" />
+    -->
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <title>PlagasOut Control Urbano</title>
+
+    <!--
+      Datos estructurados. Le dicen al buscador que esto NO es un texto
+      cualquiera: es un negocio local, con rubro, zona de cobertura y forma de
+      contacto. Es lo que habilita que aparezca la ficha del negocio en vez de
+      un resultado de texto suelto.
+
+      El tipo importa: PestControl es un tipo propio de schema.org, mas preciso
+      que LocalBusiness a secas.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "PestControl",
+        "name": "PlagasOut Control Urbano",
+        "description": "Fumigación profesional y sanitaria. Aplicador habilitado, Ley 10.699.",
+        "url": "https://viccurzio.github.io/plagas-out/",
+        "email": "info@plagasout.com.ar",
+        "areaServed": [
+          { "@type": "City", "name": "La Plata" },
+          { "@type": "City", "name": "Berisso" },
+          { "@type": "City", "name": "Ensenada" }
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "La Plata",
+          "addressRegion": "Buenos Aires",
+          "addressCountry": "AR"
+        },
+        "sameAs": ["https://instagram.com/plagasoutlp"]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

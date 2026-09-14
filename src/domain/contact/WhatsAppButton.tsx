@@ -1,7 +1,11 @@
+import { whatsappUrl } from './contactInfo';
+
+const MENSAJE = 'Hola, quiero consultar por un servicio de fumigación';
+
 export default function WhatsAppButton() {
   return (
     <a
-      href="https://wa.me/5492210000000?text=Hola%2C%20quiero%20consultar%20por%20un%20servicio%20de%20fumigaci%C3%B3n"
+      href={whatsappUrl(MENSAJE)}
       target="_blank"
       rel="noopener"
       aria-label="Escribir por WhatsApp"

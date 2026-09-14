@@ -1,0 +1,5 @@
+# Todo el sitio es publico: no hay nada que esconder de los buscadores.
+User-agent: *
+Allow: /
+
+Sitemap: https://viccurzio.github.io/plagas-out/sitemap.xml

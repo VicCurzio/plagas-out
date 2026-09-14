@@ -1,131 +1,113 @@
 # Plagas Out
 
-Sitio web de presentación y contacto para servicio de control de plagas.
+Sitio de presentación y contacto para un servicio de control de plagas en La
+Plata. Una sola página: servicios, galería, testimonios y un formulario que
+manda la consulta por correo.
 
-## Descripción
+En producción: <https://viccurzio.github.io/plagas-out/>
 
-Plagas Out es una landing page moderna construida con React y TypeScript que presenta servicios de control de plagas. Incluye secciones de presentación, servicios, galería, testimonios y formulario de contacto.
+## Requisitos
 
-## Stack
+| | |
+|---|---|
+| Node | 20 o superior |
+| Base de datos | no usa |
+| Servicios externos | EmailJS (opcional, para el formulario) |
 
-- **Runtime:** Node.js (v24+)
-- **Framework:** React 19.2.8
-- **Lenguaje:** TypeScript 6.0.2
-- **Build:** Vite 8.2.0
-- **Linting:** Oxlint 1.75.0
-- **Email:** emailJS (configurar)
-
-## Instalación
+## Puesta en marcha (local, en cinco minutos)
 
 ```bash
+git clone https://github.com/VicCurzio/plagas-out.git && cd plagas-out
 npm install
-```
-
-## Scripts
-
-- `npm run dev` — Inicia servidor de desarrollo (Vite)
-- `npm run build` — Compila TypeScript y construye con Vite
-- `npm run lint` — Ejecuta Oxlint para análisis estático
-- `npm run preview` — Previsualiza el build compilado
-
-## Estructura
-
-```
-src/
-├─ App.tsx                  # Componente raíz
-├─ main.tsx                 # Entry point
-├─ index.css                # Estilos globales
-└─ components/
-   ├─ Header.tsx            # Encabezado / navegación
-   ├─ Hero.tsx              # Sección hero
-   ├─ Services.tsx          # Servicios ofrecidos
-   ├─ Gallery.tsx           # Galería de fotos
-   ├─ Testimonials.tsx      # Testimonios de clientes
-   ├─ WhyUs.tsx             # Por qué elegirnos
-   ├─ Specials.tsx          # Ofertas especiales
-   ├─ HowWeWork.tsx         # Cómo trabajamos
-   ├─ Contact.tsx           # Formulario de contacto (emailJS pendiente)
-   ├─ About.tsx             # Acerca de
-   ├─ Footer.tsx            # Pie de página
-   ├─ WhatsAppButton.tsx     # Botón flotante de WhatsApp
-   ├─ Reveal.tsx            # Componente de animación
-   └─ ImagePlaceholder.tsx   # Placeholder de imágenes
-```
-
-## Configuración
-
-### Variables de entorno
-
-Copia `.env.example` a `.env` y configura los valores:
-
-```bash
-cp .env.example .env
-```
-
-Variables requeridas:
-
-```env
-VITE_EMAILJS_PUBLIC_KEY=your_key
-VITE_EMAILJS_SERVICE_ID=your_service_id
-VITE_EMAILJS_TEMPLATE_ID=your_template_id
-VITE_CONTACT_EMAIL=info@plagasout.com.ar
-```
-
-### EmailJS (Por completar)
-
-El proyecto tiene `@emailjs/browser` instalado pero la integración aún no está implementada en `Contact.tsx`. Actualmente usa `mailto:` como fallback.
-
-**Pasos para integrar emailJS:**
-
-1. Crear cuenta en [emailjs.com](https://www.emailjs.com)
-2. Configurar un servicio de email (Gmail, Outlook, custom SMTP)
-3. Crear una plantilla de email
-4. Obtener `PUBLIC_KEY`, `SERVICE_ID` y `TEMPLATE_ID`
-5. Actualizar `Contact.tsx` para usar emailJS en lugar de `mailto:`
-
-```tsx
-// Ejemplo de integración (no implementado aún)
-import emailjs from '@emailjs/browser';
-
-emailjs.init('PUBLIC_KEY');
-
-function handleSubmit(e) {
-  e.preventDefault();
-  emailjs.send('SERVICE_ID', 'TEMPLATE_ID', {
-    nombre,
-    zona,
-    tipo,
-    mensaje,
-  });
-}
-```
-
-## Desarrollo
-
-```bash
+cp .env.example .env    # se puede dejar vacío: ver "Configuración"
 npm run dev
 ```
 
-Abre `http://localhost:5173` en el navegador.
+Abre en <http://localhost:5173/plagas-out/>.
 
-## Build para producción
+## Verificación
+
+No hay suite de tests todavía. Lo que sí corre y hay que mantener en verde:
 
 ```bash
-npm run build
-npm run preview  # Ver el build compilado localmente
+npm run lint       # oxlint + la regla de capas
+npm run typecheck  # tsc
 ```
 
-Los archivos compilados se generan en `dist/`.
+Los dos corren en GitHub Actions en cada push y en cada pull request, y el
+despliegue depende de que pasen.
 
-## Notas
+## Cómo se despliega
 
-- Las imágenes usan `ImagePlaceholder` — reemplazar con assets reales
-- Estilos: verificar `index.css` para paleta de colores y tipografía
-- WhatsApp: Número de contacto hardcodeado en `Contact.tsx` — actualizar según sea necesario
-- Instagram: Handle `@plagasoutlp` — puede variar
+Automático. Al pushear a `main`, `.github/workflows/deploy.yml` verifica,
+compila y publica en GitHub Pages.
 
-## Autor
+**Importante:** Vite congela las variables de entorno dentro del bundle en el
+momento de compilar. Las credenciales de EmailJS tienen que estar cargadas en
+**Settings > Secrets and variables > Actions** del repositorio; si no están, el
+sitio publicado queda sin envío por correo y todas las consultas caen al
+respaldo de `mailto:`.
 
-Desarrollado por **Victor Roberto Curzio**  
-Portfolio: [viccurzio.github.io/portfolio](https://viccurzio.github.io/portfolio/)  
-Email: victor.curzio@hotmail.com
+## Configuración
+
+Las cuatro variables están documentadas en `.env.example` y se leen en un solo
+lugar, `src/shared/config/env.ts`, que las verifica al arrancar.
+
+| Variable | Para qué |
+|---|---|
+| `VITE_EMAILJS_PUBLIC_KEY` · `VITE_EMAILJS_SERVICE_ID` · `VITE_EMAILJS_TEMPLATE_ID` | Envío del formulario por correo. Opcionales: las tres o ninguna. |
+| `VITE_CONTACT_EMAIL` | Casilla que recibe las consultas y se muestra en la sección de contacto. |
+
+**Sin EmailJS el formulario sigue funcionando:** abre el cliente de correo del
+visitante con la consulta ya cargada. Es a propósito, para no perder una
+consulta por un problema de configuración. Lo que no es válido es cargar
+algunas variables y otras no: en desarrollo el sitio se niega a arrancar y en
+producción lo avisa por consola, porque ese estado significa que alguien creyó
+que el envío estaba configurado y no lo está.
+
+## Estructura del código
+
+El corte es por área, no por tipo de archivo: abrir "contacto" es abrir una
+carpeta, no perseguir el mismo concepto por `components/`, `hooks/` y
+`services/`.
+
+```text
+src/
+  main.tsx  App.tsx        # monta la aplicación
+  screens/home/            # la pantalla: Header, Hero, Servicios, Galería… y el Footer
+  domain/contact/          # lo que es del negocio: datos de contacto y envío del formulario
+  shared/ui/               # genérico y sin negocio: Reveal, ImagePlaceholder
+  shared/config/           # variables de entorno verificadas
+  index.css                # estilos globales
+```
+
+**La regla de dependencia:**
+
+```text
+screens  ->  domain  ->  shared
+```
+
+Las flechas van en un solo sentido. `shared/` no importa nada de `domain/` ni de
+`screens/`: si un componente compartido necesita saber algo del negocio, dejó de
+ser compartido. Dos áreas de `domain/` distintas tampoco se importan entre sí.
+
+La regla la verifica `scripts/check-layers.mjs`, que corre dentro de
+`npm run lint`. Una regla de arquitectura que nadie ejecuta no existe: dura tres
+commits. El script además se prueba a sí mismo antes de revisar el código, con
+imports que tiene que rechazar — un chequeo que no puede fallar no protege nada.
+
+## Entrega y versiones
+
+Mensajes de commit con [Conventional Commits](https://www.conventionalcommits.org/es/)
+(`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`) y versiones semánticas.
+
+```bash
+npm run release -- patch --tag   # sube package.json, fecha el CHANGELOG y crea el tag
+```
+
+## Pendiente
+
+- Reemplazar las imágenes de muestra: los bloques con `ImagePlaceholder` sin
+  `src` son los que faltan.
+- El número de WhatsApp es de ejemplo (`+54 221 000-0000`). Está en un solo
+  lugar: `src/domain/contact/contactInfo.ts`.

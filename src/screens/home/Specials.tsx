@@ -1,4 +1,4 @@
-import Reveal from './Reveal';
+import Reveal from '../../shared/ui/Reveal';
 
 const ACTIVITIES = [
   'Viviendas y Consorcios',
