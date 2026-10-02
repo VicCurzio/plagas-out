@@ -14,6 +14,7 @@ Se cierra una versión con `npm run release`.
 - Chequeo de configuración al arrancar: si EmailJS queda configurado a medias, el sitio lo avisa en el momento en vez de mandar todas las consultas por correo del visitante sin que nadie se entere.
 - Datos de contacto (WhatsApp, correo, Instagram) en un solo lugar, para que no queden desincronizados entre el botón flotante y la sección de contacto.
 - El sitio ahora se puede encontrar y compartir: tarjeta con título y descripción al mandar el link por WhatsApp, sitemap y robots para los buscadores, y datos estructurados que declaran el negocio, el rubro y la zona (La Plata, Berisso, Ensenada).
+- La tarjeta del link ahora lleva imagen: al pegar la dirección en WhatsApp, LinkedIn o Instagram se ve una placa con el nombre, la zona de cobertura y la habilitación, en lugar de solo texto.
 
 ### Cambiado
 
