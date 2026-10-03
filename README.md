@@ -1,5 +1,7 @@
 # Plagas Out
 
+[![Deploy](https://github.com/VicCurzio/plagas-out/actions/workflows/deploy.yml/badge.svg)](https://github.com/VicCurzio/plagas-out/actions/workflows/deploy.yml)
+
 Sitio de presentación y contacto para un servicio de control de plagas en La
 Plata. Una sola página: servicios, galería, testimonios y un formulario que
 manda la consulta por correo.
