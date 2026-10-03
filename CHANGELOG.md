@@ -8,6 +8,9 @@ Se cierra una versión con `npm run release`.
 
 ## [Sin publicar]
 
+
+## [0.2.0] - 2026-10-03
+
 ### Agregado
 
 - Verificación automática antes de publicar: el linter, la regla de capas y el chequeo de tipos corren en cada push y en cada pull request, y el despliegue depende de que pasen.
